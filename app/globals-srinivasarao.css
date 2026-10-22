@@ -1,0 +1,170 @@
+@import "tailwindcss";
+
+@source "../components";
+@source "../app";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #0b0f19;
+  --foreground: #f8fafc;
+  --color-primary: #3b82f6;
+  --color-secondary: #8b5cf6;
+}
+
+html.dark {
+  --background: #0b0f19;
+  --foreground: #f8fafc;
+  color-scheme: dark;
+}
+
+html.light {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+  color-scheme: light;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+/* Light Theme Overrides for Enterprise Contrast */
+html.light body {
+  background-color: #f8fafc;
+  color: #0f172a;
+}
+
+html.light .bg-\[\#0B0F19\] {
+  background-color: #f8fafc !important;
+}
+
+html.light .bg-\[\#0D1322\],
+html.light .bg-\[\#0D1322\]\/80,
+html.light .bg-\[\#0D1322\]\/90 {
+  background-color: #ffffff !important;
+}
+
+html.light .bg-\[\#111827\],
+html.light .bg-\[\#111827\]\/90,
+html.light .bg-\[\#111827\]\/80 {
+  background-color: #ffffff !important;
+  box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.05), 0 1px 2px -1px rgb(0 0 0 / 0.05);
+}
+
+html.light .bg-slate-900,
+html.light .bg-slate-900\/60,
+html.light .bg-slate-900\/80,
+html.light .bg-slate-900\/90 {
+  background-color: #f1f5f9 !important;
+}
+
+html.light .bg-slate-800,
+html.light .bg-slate-800\/60,
+html.light .bg-slate-800\/80,
+html.light .bg-slate-800\/90 {
+  background-color: #e2e8f0 !important;
+}
+
+html.light .border-slate-800,
+html.light .border-slate-800\/60,
+html.light .border-slate-800\/80,
+html.light .border-slate-800\/90 {
+  border-color: #e2e8f0 !important;
+}
+
+html.light .border-slate-700,
+html.light .border-slate-700\/60,
+html.light .border-slate-700\/80 {
+  border-color: #cbd5e1 !important;
+}
+
+html.light .text-slate-100,
+html.light .text-white {
+  color: #0f172a !important;
+}
+
+html.light .text-slate-200 {
+  color: #1e293b !important;
+}
+
+html.light .text-slate-300 {
+  color: #334155 !important;
+}
+
+html.light .text-slate-400 {
+  color: #64748b !important;
+}
+
+html.light .text-slate-500 {
+  color: #64748b !important;
+}
+
+/* Ensure brand gradient buttons & hero cards preserve high contrast white text in light mode */
+html.light .bg-gradient-to-r.from-blue-900,
+html.light .bg-gradient-to-r.from-blue-600,
+html.light .bg-gradient-to-tr.from-blue-600,
+html.light .bg-gradient-to-tr.from-blue-700,
+html.light .btn-primary-gradient,
+html.light button[class*="bg-gradient-to-r"] {
+  color: #ffffff !important;
+}
+
+html.light .bg-gradient-to-r.from-blue-900 *,
+html.light .bg-gradient-to-r.from-blue-600 *,
+html.light .bg-gradient-to-tr.from-blue-600 *,
+html.light .bg-gradient-to-tr.from-blue-700 * {
+  color: inherit !important;
+}
+
+/* Smooth Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 9999px;
+}
+
+html.light ::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #475569;
+}
+
+/* Polished Entrance Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes pulseSubtle {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.animate-pulseSubtle {
+  animation: pulseSubtle 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}

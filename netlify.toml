@@ -1,0 +1,25 @@
+# ==============================================================================
+# WISEWARE AI — NETLIFY DEPLOYMENT CONFIGURATION
+# ==============================================================================
+# Configuration for automated Next.js App Router deployment on Netlify.
+#
+# Environment variables must be set in the Netlify Dashboard:
+# -> Site configuration -> Environment variables
+#
+# Server-side variables required for live integrations:
+# - EXPLORIUM_API_KEY (Explorium AgentSource B2B Intelligence)
+# - GEMINI_API_KEY (Google Gemini AI Model Inference)
+# - DATABASE_URL (Supabase Transaction Pooler - port 6543)
+# - DIRECT_URL (Supabase Direct Connection - port 5432)
+# ==============================================================================
+
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "20"
+  NODE_OPTIONS = "--use-system-ca"
+
+[[plugins]]
+  package = "@netlify/plugin-nextjs"

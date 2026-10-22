@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+@source "../components";
+@source "../app";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+:root {
+  --background: #0b0f19;
+  --foreground: #f8fafc;
+}
+
+.dark {
+  --background: #0b0f19;
+  --foreground: #f8fafc;
+}
+
+body {
+  background-color: #0b0f19;
+  color: #f8fafc;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

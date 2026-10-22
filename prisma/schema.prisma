@@ -1,0 +1,144 @@
+// Prisma Schema for Wiseware AI with Supabase PostgreSQL
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model AIModel {
+  id            String      @id @default(uuid())
+  name          String      @unique
+  slug          String      @unique
+  provider      String      @default("Wiseware")
+  version       String      @default("1.0.0")
+  status        String      @default("ONLINE") // ONLINE, DEGRADED, OFFLINE
+  description   String?
+  contextWindow Int         @default(128000)
+  avgLatencyMs  Int         @default(48)
+  accuracyRate  Float       @default(99.2)
+  isDefault     Boolean     @default(false)
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  inferences    Inference[]
+
+  @@map("ai_models")
+}
+
+model Inference {
+  id                 String   @id @default(uuid())
+  code               String   @unique // e.g. WW-9X42A
+  prompt             String   @db.Text
+  modelId            String?
+  modelName          String
+  category           String   @default("General")
+  latencyMs          Int
+  tokensUsed         Int
+  confidenceScore    Float
+  sentiment          String   // Positive, Neutral, Constructive, Critical
+  summary            String   @db.Text
+  keyInsights        String[]
+  extractedEntities  String[]
+  recommendations    String[]
+  status             String   @default("Completed") // Completed, Failed, Processing
+  isRealAI           Boolean  @default(false)       // Whether generated via external LLM or Demo Mode
+  createdAt          DateTime @default(now())
+  model              AIModel? @relation(fields: [modelId], references: [id], onDelete: SetNull)
+
+  @@index([createdAt])
+  @@index([modelName])
+  @@index([category])
+  @@map("inferences")
+}
+
+model Workflow {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  triggerType String    @default("EVENT") // SCHEDULE, EVENT, MANUAL, WEBHOOK
+  status      String    @default("ACTIVE") // ACTIVE, PAUSED, DRAFT
+  schedule    String?   // cron syntax or interval description
+  stepsCount  Int       @default(3)
+  lastRunAt   DateTime?
+  lastStatus  String?   // SUCCESS, FAILED, RUNNING
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("workflows")
+}
+
+model SystemLog {
+  id        String   @id @default(uuid())
+  level     String   @default("INFO") // INFO, WARN, ERROR, DEBUG
+  source    String   // API, Engine, Auth, Database, Scheduler
+  message   String   @db.Text
+  metadata  Json?
+  timestamp DateTime @default(now())
+
+  @@index([level])
+  @@index([source])
+  @@index([timestamp])
+  @@map("system_logs")
+}
+
+model UsageMetric {
+  id             String   @id @default(uuid())
+  date           DateTime @db.Date
+  tokensUsed     Int      @default(0)
+  inferenceCount Int      @default(0)
+  avgLatencyMs   Float    @default(0.0)
+  errorCount     Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@unique([date])
+  @@map("usage_metrics")
+}
+
+model Setting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     String   @db.Text
+  category  String   @default("general") // general, model, security, notification
+  updatedAt DateTime @updatedAt
+
+  @@map("settings")
+}
+
+model UserCredit {
+  id           String              @id @default(uuid())
+  userId       String              @unique @default("default-user")
+  balance      Int                 @default(2500)
+  totalAdded   Int                 @default(2500)
+  totalUsed    Int                 @default(0)
+  tier         String              @default("Enterprise")
+  createdAt    DateTime            @default(now())
+  updatedAt    DateTime            @updatedAt
+  transactions CreditTransaction[]
+
+  @@map("user_credits")
+}
+
+model CreditTransaction {
+  id             String      @id @default(uuid())
+  creditId       String
+  amount         Int         // positive for additions, negative for deductions
+  balanceAfter   Int
+  type           String      // ADD, DEDUCT, REFUND
+  category       String      // AI_INFERENCE, B2B_ENRICHMENT, TEST_PURCHASE, INITIAL_GRANT, SYSTEM_ADJUSTMENT
+  description    String
+  idempotencyKey String?     @unique
+  metadata       Json?
+  createdAt      DateTime    @default(now())
+  userCredit     UserCredit  @relation(fields: [creditId], references: [id], onDelete: Cascade)
+
+  @@index([creditId])
+  @@index([type])
+  @@index([category])
+  @@index([createdAt])
+  @@map("credit_transactions")
+}
